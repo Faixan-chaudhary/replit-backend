@@ -2,7 +2,7 @@ services:
   - type: web
     name: qa-app-server
     runtime: node
-    buildCommand: NODE_ENV=development npm install && npm run build
+    buildCommand: NODE_ENV=development npm install && npm run build && npx playwright install chrome
     startCommand: npm start
     envVars:
       - key: NODE_ENV

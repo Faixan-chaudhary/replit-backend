@@ -5,10 +5,10 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "postinstall": "npm run build",
+    "postinstall": "npm run build && npm run playwright:install",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
-    "playwright:install": "npx playwright install"
+    "playwright:install": "npx playwright install chrome"
   },
   "keywords": [],
   "author": "",
