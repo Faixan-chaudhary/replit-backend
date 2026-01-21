@@ -5,10 +5,10 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "postinstall": "npm run build && npm run playwright:install",
+    "postinstall": "npm run build",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
-    "playwright:install": "npx playwright install chrome"
+    "playwright:install": "PLAYWRIGHT_BROWSERS_PATH=$HOME/.cache/ms-playwright npx playwright install chromium 2>/dev/null || echo 'Browser installation skipped (non-critical)'"
   },
   "keywords": [],
   "author": "",

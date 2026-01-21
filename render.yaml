@@ -2,7 +2,7 @@ services:
   - type: web
     name: qa-app-server
     runtime: node
-    buildCommand: NODE_ENV=development npm install && npm run build && npx playwright install chrome
+    buildCommand: NODE_ENV=development npm install && npm run build && PLAYWRIGHT_BROWSERS_PATH=./.playwright npx playwright install chromium
     startCommand: npm start
     envVars:
       - key: NODE_ENV
