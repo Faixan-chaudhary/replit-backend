@@ -15,6 +15,38 @@ let mcpClient: Client | null = null;
 let mcpTransport: StdioClientTransport | null = null;
 
 /**
+ * Ensure Playwright Chromium browser is installed
+ */
+async function ensurePlaywrightBrowser(): Promise<void> {
+  try {
+    console.log('🔧 Ensuring Playwright Chromium browser is installed...');
+    // Install chromium (idempotent - won't reinstall if already present)
+    // Use PLAYWRIGHT_BROWSERS_PATH to install to user directory (no root needed)
+    const browserPath = process.env.PLAYWRIGHT_BROWSERS_PATH || path.join(os.homedir(), '.cache', 'ms-playwright');
+    process.env.PLAYWRIGHT_BROWSERS_PATH = browserPath;
+    
+    // Install chromium (bundled browser, no system deps needed)
+    // MCP server should be able to use chromium when it asks for chrome
+    execSync('npx playwright install chromium', { 
+      encoding: 'utf-8', 
+      stdio: 'pipe',
+      timeout: 120000,
+      env: { ...process.env, PLAYWRIGHT_BROWSERS_PATH: browserPath }
+    });
+    console.log('✅ Playwright Chromium browser ready');
+  } catch (error: any) {
+    // Non-blocking - installation might have failed but browser might already be there
+    // or MCP server will handle it
+    if (error.message && !error.message.includes('already installed')) {
+      console.warn('⚠️  Could not install Chromium:', error.message);
+      console.warn('⚠️  Browser installation will be attempted by MCP server if needed');
+    } else {
+      console.log('✅ Chromium browser is available');
+    }
+  }
+}
+
+/**
  * Initialize MCP client connection to Playwright MCP server
  */
 export async function initializeMCPClient(): Promise<void> {
@@ -27,6 +59,9 @@ export async function initializeMCPClient(): Promise<void> {
     console.log('⏭️  Skipping MCP initialization (SKIP_MCP=true). Using custom tools only.');
     return;
   }
+
+  // Ensure Playwright browser is installed before initializing MCP
+  await ensurePlaywrightBrowser();
 
   try {
     const isWindows = os.platform() === 'win32';
