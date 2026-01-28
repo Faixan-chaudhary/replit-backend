@@ -16,7 +16,8 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
-    "playwright:install": "npx playwright install"
+    "playwright:install": "npx playwright install",
+    "postinstall": "npm run build"
   },
   "keywords": [],
   "author": "",
