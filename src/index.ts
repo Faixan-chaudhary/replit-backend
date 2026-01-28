@@ -62,6 +62,15 @@ app.post('/api/start-test', async (req, res) => {
   // Send initial connection message
   res.write(`data: ${JSON.stringify({ type: 'connected', message: 'Connected to agent stream' })}\n\n`);
 
+  // Keep-alive heartbeat (prevents connection timeout during long waits)
+  const heartbeat = setInterval(() => {
+    try {
+      res.write(': heartbeat\n\n');
+    } catch {
+      clearInterval(heartbeat);
+    }
+  }, 10000);
+
   // Log callback function
   const sendLog = (log: LogMessage) => {
     try {
@@ -79,11 +88,13 @@ app.post('/api/start-test', async (req, res) => {
     });
 
     const result = await runAgent(url, schema, sendLog);
+    clearInterval(heartbeat);
 
     // Send final result
     res.write(`data: ${JSON.stringify({ type: 'complete', ...result })}\n\n`);
     res.end();
   } catch (error: any) {
+    clearInterval(heartbeat);
     sendLog({
       type: 'error',
       message: `Fatal error: ${error.message}`,
