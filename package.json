@@ -16,8 +16,8 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
-    "playwright:install": "npx playwright install",
-    "postinstall": "npm run build"
+    "playwright:install": "npx playwright install chrome",
+    "postinstall": "npm run build && npm run playwright:install"
   },
   "keywords": [],
   "author": "",
